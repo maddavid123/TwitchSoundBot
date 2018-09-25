@@ -150,18 +150,7 @@ public class Connection extends Application {
 
     public void start(Stage primaryStage) {
         joinRoom();
-
         if (!Settings.modsList.contains(Settings.CHANNEL)) Settings.addNewMod(Settings.CHANNEL);
-        /*for(int i =0; i<9;i++){
-            new SoundPlayer("C:/Users/David/Desktop/Desktop/Audio/Nohboard.wav");
-            try{
-                Thread.sleep(800);
-                 } catch (InterruptedException e){
-                e.printStackTrace();
-            }
-            new SoundPlayer("C:/Users/David/Desktop/buwoo.mp3");
-        }*/
-
         for (int i = 0; i < 9; i++) {
             try {
                 String tempLine = messageRecieved.readLine();
@@ -212,9 +201,11 @@ public class Connection extends Application {
                                 System.out.println(cooldown);
                                 if (cooldown.contains("default")) {
                                     for (Sound s : Settings.soundList) s.setCooldown(s.getDefaultCooldown());
+                                    Settings.perUserCoolDown = Settings.defaultUserCoolDown;
                                 } else {
                                     cooldown = cooldown.replace(" ", "");
                                     int newGlobalCoolDown = Integer.parseInt(cooldown);
+                                    if(newGlobalCoolDown == 0) Settings.perUserCoolDown = 0;
                                     sendMessage("Global Cooldown has been set to: " + newGlobalCoolDown);
                                     for (Sound s : Settings.soundList) s.setCooldown(newGlobalCoolDown);
                                     break;
