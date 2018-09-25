@@ -15,7 +15,7 @@ import java.util.Iterator;
 /**
  * Created by David on 14/03/2018.
  */
-public class Connection extends Application {
+public class Connection{
 
 
     static Socket conn = null;
@@ -44,7 +44,7 @@ public class Connection extends Application {
     static void sendMessage(String message) {
         output.print("PRIVMSG #" + Settings.CHANNEL + " :" + message + "\r\n");
         output.flush();
-        System.out.println("Sent: PRIVMSG #" + Settings.CHANNEL + ": " + message + "\r\n");
+        //System.out.println("Sent: PRIVMSG #" + Settings.CHANNEL + ": " + message + "\r\n");
     }
 
     public static void main(String[] args) {
@@ -102,7 +102,7 @@ public class Connection extends Application {
                 Settings.CHANNEL = args[0];
                 Settings.NICK = args[1];
                 Settings.PASS = args[2];
-                launch(args);
+                new Connection().launch();
             }
         }
         if (Settings.CHANNEL == null) {
@@ -148,7 +148,7 @@ public class Connection extends Application {
         }
     });
 
-    public void start(Stage primaryStage) {
+    public void launch() {
         joinRoom();
         if (!Settings.modsList.contains(Settings.CHANNEL)) Settings.addNewMod(Settings.CHANNEL);
         for (int i = 0; i < 9; i++) {
@@ -177,15 +177,15 @@ public class Connection extends Application {
                     String actualLine = tempLine.substring(tempLine.indexOf("#"));
                     String command = actualLine.substring(actualLine.indexOf("!")).replace(" ", "");
                     String userRequesting = tempLine.substring(1, tempLine.indexOf("!"));
-                    System.out.println(actualLine);
-                    System.out.println(userRequesting);
-                    System.out.println(command);
+                    //System.out.println(actualLine);
+                    //System.out.println(userRequesting);
+                    //System.out.println(command);
                     if (!Settings.usersCooldown.containsKey(userRequesting))
                         Settings.usersCooldown.put(userRequesting, -2-Settings.perUserCoolDown);
 
                     if (command.substring(0,command.indexOf("n")+1).equalsIgnoreCase("!usercooldown")) {
                         String cooldown = command.substring(13);
-                        System.out.println(cooldown);
+                        //System.out.println(cooldown);
                         if (cooldown.contains("default")) {
                             Settings.perUserCoolDown = Settings.defaultUserCoolDown;
                         } else {
@@ -198,7 +198,7 @@ public class Connection extends Application {
                         for (String mod : Settings.modsList) {
                             if (userRequesting.equals(mod)) {
                                 String cooldown = command.substring(15);
-                                System.out.println(cooldown);
+                                //System.out.println(cooldown);
                                 if (cooldown.contains("default")) {
                                     for (Sound s : Settings.soundList) s.setCooldown(s.getDefaultCooldown());
                                     Settings.perUserCoolDown = Settings.defaultUserCoolDown;
@@ -255,7 +255,7 @@ public class Connection extends Application {
                 readbuffer += messageRecieved.readLine();
                 String[] lines = readbuffer.split("\n");
                 for (String s : lines) {
-                    System.out.println(s);
+                    //System.out.println(s);
                     loading = s.equals("End of /NAMES list");
                 }
             }
