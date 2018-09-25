@@ -190,6 +190,7 @@ public class Connection{
                             Settings.perUserCoolDown = Settings.defaultUserCoolDown;
                         } else {
                             Settings.perUserCoolDown = Integer.parseInt(cooldown);
+                            Settings.setPerUserCoolDown(Integer.parseInt(cooldown));
                             sendMessage("Per User Cooldown has been set to: " + cooldown);
                         }
 
