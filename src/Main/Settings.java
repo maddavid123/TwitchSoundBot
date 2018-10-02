@@ -107,7 +107,7 @@ public class Settings {
                 Class.forName("org.sqlite.JDBC");
                 c = DriverManager.getConnection("jdbc:sqlite:database.db");
                 PreparedStatement stmn = c.prepareStatement("UPDATE SETTINGS\n" +
-                        "SET perUserCoolDown = ?);");
+                        "SET perUserCoolDown = ?;");
                 stmn.setInt(1,i);
                 stmn.execute();
                 stmn.close();

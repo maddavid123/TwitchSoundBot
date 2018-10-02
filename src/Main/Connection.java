@@ -166,34 +166,44 @@ public class Connection{
             try {
                 String tempLine = messageRecieved.readLine();
                 if (tempLine != null) {
-                    System.out.println(tempLine);
+                    //System.out.println(tempLine);
                     if (tempLine.equals("PING :tmi.twitch.tv")) {
                         output.print("PONG :tmi.twitch.tv\r\n");
-                        System.out.println("PONGED");
+                        output.flush();
+                        System.out.println("PONGED - (Responding to twitch's ping)");
                         checkMods();
                         continue;
                     }
 
                     String actualLine = tempLine.substring(tempLine.indexOf("#"));
-                    String command = actualLine.substring(actualLine.indexOf("!")).replace(" ", "");
+                    String command = "";
+                    try {
+                        command = actualLine.substring(actualLine.indexOf("!")).replace(" ", "");
+                    }catch(StringIndexOutOfBoundsException e){
+                        command = actualLine.substring(actualLine.indexOf(":"));
+                    }
                     String userRequesting = tempLine.substring(1, tempLine.indexOf("!"));
+                    System.out.println(userRequesting+":"+command);
                     //System.out.println(actualLine);
                     //System.out.println(userRequesting);
                     //System.out.println(command);
                     if (!Settings.usersCooldown.containsKey(userRequesting))
-                        Settings.usersCooldown.put(userRequesting, -2-Settings.perUserCoolDown);
+                        Settings.usersCooldown.put(userRequesting, -1000-Settings.defaultUserCoolDown);
 
                     if (command.substring(0,command.indexOf("n")+1).equalsIgnoreCase("!usercooldown")) {
-                        String cooldown = command.substring(13);
-                        //System.out.println(cooldown);
-                        if (cooldown.contains("default")) {
-                            Settings.perUserCoolDown = Settings.defaultUserCoolDown;
-                        } else {
-                            Settings.perUserCoolDown = Integer.parseInt(cooldown);
-                            Settings.setPerUserCoolDown(Integer.parseInt(cooldown));
-                            sendMessage("Per User Cooldown has been set to: " + cooldown);
+                        for (String mod : Settings.modsList) {
+                            if (userRequesting.equals(mod)) {
+                                String cooldown = command.substring(13);
+                                //System.out.println(cooldown);
+                                if (cooldown.contains("default")) {
+                                    Settings.perUserCoolDown = Settings.defaultUserCoolDown;
+                                } else {
+                                    Settings.perUserCoolDown = Integer.parseInt(cooldown);
+                                    Settings.setPerUserCoolDown(Integer.parseInt(cooldown));
+                                    sendMessage("Per User Cooldown has been set to: " + cooldown);
+                                }
+                            }
                         }
-
                     }
                     if (command.substring(0,command.indexOf("n")+1).equalsIgnoreCase("!globalcooldown")) {
                         for (String mod : Settings.modsList) {
@@ -216,7 +226,10 @@ public class Connection{
                     } else {
                         for (Sound s : Settings.soundList) {
                             if (command.equals(s.getSoundCommand())) {
-                                if (s.getAccessType().equals("mod")) {
+                                if(userRequesting.equals(Settings.CHANNEL)) {
+                                    new SoundPlayer(s);
+                                }
+                                else if (s.getAccessType().equals("mod")) {
                                     for (String mod : Settings.modsList) {
                                         if (userRequesting.equals(mod)) {
                                             if ((mainTimer - s.getLastUsed()) >= s.getCooldown()) {
@@ -225,9 +238,11 @@ public class Connection{
                                                     new SoundPlayer(s);
                                                 }
                                             }
+                                            break;
                                         }
-                                        break;
+
                                     }
+
                                 } else {
                                     if ((mainTimer - s.getLastUsed()) >= s.getCooldown()) {
                                         if (mainTimer - Settings.usersCooldown.get(userRequesting) >= Settings.perUserCoolDown) {
@@ -235,8 +250,8 @@ public class Connection{
                                             new SoundPlayer(s);
                                         }
                                     }
-                                    break;
                                 }
+                                break;
                             }
                         }
                     }

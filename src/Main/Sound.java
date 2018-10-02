@@ -17,6 +17,7 @@ public class Sound {
         this.accessType = accessType;
         this.cooldown = cooldown;
         defaultCooldown = cooldown;
+        lastUsed = -5000;
     }
 
     public int getCooldown() {
